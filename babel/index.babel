@@ -1,0 +1,38 @@
+class Clock extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      toggle: false,
+      timer: 25*60*1000,
+      sessionLength: 25,
+      breakLength: 5*60*1000
+    }
+  }
+
+  tick = () => { this.setState(prevState => ({ timer: prevState.timer- 1000 })) };
+
+  countDown = () => { setInterval( () => this.tick(), 1000); };
+
+  stopTimer = () => { setTimeout( () => this.countDown(), this.state.breakLength) };
+
+  toggleTimer = () => { 
+    this.setState(prevState => ({ toggle: !prevState.toggle }))
+    this.state.toggle? this.countDown() : this.stopTimer();
+  };
+
+  render(){
+    return(
+       <div>
+        <div onClick={ this.toggleTimer.bind(this) }>{this.state.timer}</div>
+        </div>
+            
+    )
+  }
+}
+
+
+
+ReactDOM.render(
+  <Clock />,
+  document.getElementById('container')
+);
