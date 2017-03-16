@@ -2,33 +2,56 @@ class Clock extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      toggle: false,
-      timer: 25*60*1000,
-      sessionLength: 25,
-      breakLength: 5*60*1000
+      switch: true,
+      timerString: "1:00",
+      min: 1,
+      sec: 0,
+      sessionLength: 1,
+      breakLength: 2,
+      pause: true
     }
   }
+  
+  calculateCurrentCounter = () => {
+    var currentTimeInMilliSec = (this.state.min * 1000 * 60) + (this.state.sec*1000);
+    var newTimeInMin = (currentTimeInMilliSec - 1000) / (1000*60);
+    var minutes = Math.floor(newTimeInMin);
+    var seconds = Math.round((newTimeInMin % 1) * 60);
+    console.log("min " + minutes + " ,secs " + seconds);
+    this.setState({ min: minutes, sec: seconds, timerString: minutes + ":" + ((seconds === 0)? "00" : seconds)});  
+  };
 
-  tick = () => { this.setState(prevState => ({ timer: prevState.timer- 1000 })) };
+  switchSession = () => { 
+        this.state.switch? this.setState({min: this.state.breakLength}): this.setState({min: this.state.sessionLength});
+    this.setState(prevState => ({ switch: !prevState.switch }))
+    
+  };
 
-  countDown = () => { setInterval( () => this.tick(), 1000); };
+  tick = () => {   
+    this.calculateCurrentCounter();
+    if(this.state.min === 0 && this.state.sec === 0) this.switchSession();
+};
 
-  stopTimer = () => { setTimeout( () => this.countDown(), this.state.breakLength) };
+  countDown = () => { this.IntervalId = setInterval( () => this.tick(), 1000); };
 
-  toggleTimer = () => { 
-    this.setState(prevState => ({ toggle: !prevState.toggle }))
-    this.state.toggle? this.countDown() : this.stopTimer();
+
+  toggleTimer = () => {
+    console.log(this.state.pause);
+    this.setState(prevState => ({ pause: !prevState.pause }))
+    console.log(this.state.pause + ", "+ this.state.switch);
+    this.state.pause? clearInterval(this.IntervalId) :this.countDown();
   };
 
   render(){
     return(
        <div>
-        <div onClick={ this.toggleTimer.bind(this) }>{this.state.timer}</div>
+        <div onClick={ this.toggleTimer.bind(this) }>{this.state.timerString} {this.state.switch}</div>  
         </div>
             
     )
   }
 }
+
 
 
 

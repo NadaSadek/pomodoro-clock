@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -14,48 +14,64 @@ var Clock = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, _React$Component.call(this, props));
 
-    _this.tick = function () {
+    _this.calculateCurrentCounter = function () {
+      var currentTimeInMilliSec = _this.state.min * 1000 * 60 + _this.state.sec * 1000;
+      var newTimeInMin = (currentTimeInMilliSec - 1000) / (1000 * 60);
+      var minutes = Math.floor(newTimeInMin);
+      var seconds = Math.round(newTimeInMin % 1 * 60);
+      console.log("min " + minutes + " ,secs " + seconds);
+      _this.setState({ min: minutes, sec: seconds, timerString: minutes + ":" + (seconds === 0 ? "00" : seconds) });
+    };
+
+    _this.switchSession = function () {
+      _this.state.switch ? _this.setState({ min: _this.state.breakLength }) : _this.setState({ min: _this.state.sessionLength });
       _this.setState(function (prevState) {
-        return { timer: prevState.timer - 1000 };
+        return { switch: !prevState.switch };
       });
     };
 
+    _this.tick = function () {
+      _this.calculateCurrentCounter();
+      if (_this.state.min === 0 && _this.state.sec === 0) _this.switchSession();
+    };
+
     _this.countDown = function () {
-      setInterval(function () {
+      _this.IntervalId = setInterval(function () {
         return _this.tick();
       }, 1000);
     };
 
-    _this.stopTimer = function () {
-      setTimeout(function () {
-        return _this.countDown();
-      }, _this.state.breakLength);
-    };
-
     _this.toggleTimer = function () {
+      console.log(_this.state.pause);
       _this.setState(function (prevState) {
-        return { toggle: !prevState.toggle };
+        return { pause: !prevState.pause };
       });
-      _this.state.toggle ? _this.countDown() : _this.stopTimer();
+      console.log(_this.state.pause + ", " + _this.state.switch);
+      _this.state.pause ? clearInterval(_this.IntervalId) : _this.countDown();
     };
 
     _this.state = {
-      toggle: false,
-      timer: 25 * 60 * 1000,
-      sessionLength: 25,
-      breakLength: 5 * 60 * 1000
+      switch: true,
+      timerString: "1:00",
+      min: 1,
+      sec: 0,
+      sessionLength: 1,
+      breakLength: 2,
+      pause: true
     };
     return _this;
   }
 
   Clock.prototype.render = function render() {
     return React.createElement(
-      'div',
+      "div",
       null,
       React.createElement(
-        'div',
+        "div",
         { onClick: this.toggleTimer.bind(this) },
-        this.state.timer
+        this.state.timerString,
+        " ",
+        this.state.switch
       )
     );
   };
