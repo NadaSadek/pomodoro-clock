@@ -50,6 +50,30 @@ var Clock = function (_React$Component) {
       _this.state.pause ? clearInterval(_this.IntervalId) : _this.countDown();
     };
 
+    _this.increaseBreak = function () {
+      !_this.state.pause && _this.setState(function (prevState) {
+        return { breakLength: prevState.breakLength + 1 };
+      });
+    };
+
+    _this.decreaseBreak = function () {
+      !_this.state.pause && _this.state.breakLength > 0 && _this.setState(function (prevState) {
+        return { breakLength: prevState.breakLength - 1 };
+      });
+    };
+
+    _this.increaseSession = function () {
+      !_this.state.pause && _this.setState(function (prevState) {
+        return { sessionLength: prevState.sessionLength + 1 };
+      });
+    };
+
+    _this.decreaseSession = function () {
+      !_this.state.pause && _this.state.sessionLength > 0 && _this.setState(function (prevState) {
+        return { sessionLength: prevState.sessionLength - 1 };
+      });
+    };
+
     _this.state = {
       switch: true,
       timerString: "1:00",
@@ -68,15 +92,129 @@ var Clock = function (_React$Component) {
       null,
       React.createElement(
         "div",
-        { onClick: this.toggleTimer.bind(this) },
-        this.state.timerString,
-        " ",
-        this.state.switch
+        { className: "row" },
+        React.createElement(
+          "div",
+          { className: "col-md-6" },
+          React.createElement(Break, { incBreak: this.increaseBreak, decBreak: this.decreaseBreak, breakLength: this.state.breakLength })
+        ),
+        React.createElement(
+          "div",
+          { className: "col-md-6" },
+          React.createElement(Session, { incSession: this.increaseSession, decBreak: this.decreaseSession, sessionLength: this.state.sessionLength })
+        )
+      ),
+      React.createElement(
+        "div",
+        null,
+        React.createElement(Timer, { changeTimer: this.toggleTimer, timerStr: this.state.timerString })
       )
     );
   };
 
   return Clock;
+}(React.Component);
+
+var Timer = function (_React$Component2) {
+  _inherits(Timer, _React$Component2);
+
+  function Timer(props) {
+    _classCallCheck(this, Timer);
+
+    return _possibleConstructorReturn(this, _React$Component2.call(this, props));
+  }
+
+  Timer.prototype.render = function render() {
+    return React.createElement(
+      "div",
+      null,
+      React.createElement(
+        "div",
+        { className: "TimerView", onClick: this.props.changeTimer },
+        this.props.timerStr
+      )
+    );
+  };
+
+  return Timer;
+}(React.Component);
+
+var Break = function (_React$Component3) {
+  _inherits(Break, _React$Component3);
+
+  function Break(props) {
+    _classCallCheck(this, Break);
+
+    return _possibleConstructorReturn(this, _React$Component3.call(this, props));
+  }
+
+  Break.prototype.render = function render() {
+    return React.createElement(
+      "div",
+      { className: "sessionView" },
+      React.createElement(
+        "div",
+        null,
+        "Break Length"
+      ),
+      React.createElement(
+        "div",
+        { onClick: this.props.incBreak },
+        "+"
+      ),
+      React.createElement(
+        "div",
+        null,
+        this.props.breakLength
+      ),
+      React.createElement(
+        "div",
+        { onClick: this.props.decBreak },
+        "-"
+      )
+    );
+  };
+
+  return Break;
+}(React.Component);
+
+var Session = function (_React$Component4) {
+  _inherits(Session, _React$Component4);
+
+  function Session(props) {
+    _classCallCheck(this, Session);
+
+    return _possibleConstructorReturn(this, _React$Component4.call(this, props));
+  }
+
+  Session.prototype.render = function render() {
+    return React.createElement(
+      "div",
+      null,
+      React.createElement(
+        "div",
+        null,
+        "Session Length"
+      ),
+      React.createElement(
+        "div",
+        { onClick: this.props.incSession },
+        "+"
+      ),
+      React.createElement(
+        "div",
+        null,
+        this.props.sessionLength
+      ),
+      React.createElement(
+        "div",
+        { onClick: this.props.decSession },
+        "-"
+      )
+    );
+  };
+
+  return Session;
 }(React.Component);
 
 ReactDOM.render(React.createElement(Clock, null), document.getElementById('container'));

@@ -1,4 +1,4 @@
-class Clock extends React.Component{
+class Clock extends React.Component {
   constructor(props){
     super(props);
     this.state = {
@@ -32,8 +32,9 @@ class Clock extends React.Component{
     if(this.state.min === 0 && this.state.sec === 0) this.switchSession();
 };
 
-  countDown = () => { this.IntervalId = setInterval( () => this.tick(), 1000); };
-
+  countDown = () => { 
+    this.IntervalId = setInterval( () => this.tick(), 1000); 
+  };
 
   toggleTimer = () => {
     console.log(this.state.pause);
@@ -41,18 +42,86 @@ class Clock extends React.Component{
     console.log(this.state.pause + ", "+ this.state.switch);
     this.state.pause? clearInterval(this.IntervalId) :this.countDown();
   };
-
+  
+  increaseBreak = () => {
+    !this.state.pause && this.setState(prevState => ({ breakLength: prevState.breakLength + 1 }))
+  };
+   
+   decreaseBreak = () => {
+      !this.state.pause && this.state.breakLength > 0 && this.setState(prevState => ({ breakLength: prevState.breakLength - 1 }))
+  };
+  
+  increaseSession = () => {
+    !this.state.pause && this.setState(prevState => ({ sessionLength: prevState.sessionLength + 1 }))
+  };
+  
+  decreaseSession = () => {
+      !this.state.pause && this.state.sessionLength > 0 && this.setState(prevState => ({ sessionLength: prevState.sessionLength - 1 }))
+  };
+  
   render(){
     return(
        <div>
-        <div onClick={ this.toggleTimer.bind(this) }>{this.state.timerString} {this.state.switch}</div>  
+          <div className="row">
+            <div className="col-md-6">
+              <Break incBreak={this.increaseBreak} decBreak={this.decreaseBreak} breakLength={this.state.breakLength}/>
+            </div>
+            <div className="col-md-6">
+              <Session incSession={this.increaseSession} decBreak={this.decreaseSession} sessionLength={this.state.sessionLength}/>
+            </div>
+          </div>
+        <div>
+            <Timer changeTimer = {this.toggleTimer} timerStr = {this.state.timerString}/>
         </div>
-            
+     </div>
+
     )
   }
 }
 
+class Timer extends React.Component{
+  constructor(props){
+    super(props);
+  }
+  render(){
+    return(
+    <div><div className="TimerView" onClick={this.props.changeTimer} >{this.props.timerStr}</div></div>
+    )
+  }
+}
+class Break extends React.Component{
+  constructor(props){
+    super(props);
+  }
+  
+  render(){
+    return(
+    <div className="sessionView">
+        <div>Break Length</div>
+        <div onClick={this.props.incBreak}>+</div>
+        <div>{this.props.breakLength}</div>
+        <div onClick={this.props.decBreak}>-</div>
+      </div>
+    )
+  }
+}
 
+class Session extends React.Component{
+  constructor(props){
+    super(props);
+  }
+  
+  render(){
+    return(
+    <div>
+        <div>Session Length</div>
+        <div onClick={this.props.incSession}>+</div>
+        <div>{this.props.sessionLength}</div>
+        <div onClick={this.props.decSession}>-</div>
+      </div>
+    )
+  }
+}
 
 
 ReactDOM.render(
