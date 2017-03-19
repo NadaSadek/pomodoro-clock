@@ -3,15 +3,26 @@ h2 {
 }
 
 body {
-  background-color: #6A85AA;
+  background-color: #00AAA0;
   font-size: 15px;
+  font-family: "Bangers", cursive;
+  color: white;
 }
 
 #container {
-  padding-left: 40%;
+  padding-left: 30%;
 }
 
-.TimerView {
+.timerView {
   font-size: 100px;
+  cursor: pointer;
+  padding-left: 18%;
+}
+
+.plus {
+  cursor: pointer;
+}
+
+.minus {
   cursor: pointer;
 }

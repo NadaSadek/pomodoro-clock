@@ -19,20 +19,39 @@ var Clock = function (_React$Component) {
       var newTimeInMin = (currentTimeInMilliSec - 1000) / (1000 * 60);
       var minutes = Math.floor(newTimeInMin);
       var seconds = Math.round(newTimeInMin % 1 * 60);
-      console.log("min " + minutes + " ,secs " + seconds);
-      _this.setState({ min: minutes, sec: seconds, timerString: minutes + ":" + (seconds === 0 ? "00" : seconds) });
+      _this.setState({ min: minutes, sec: seconds });
     };
 
     _this.switchSession = function () {
-      _this.state.switch ? _this.setState({ min: _this.state.breakLength }) : _this.setState({ min: _this.state.sessionLength });
-      _this.setState(function (prevState) {
-        return { switch: !prevState.switch };
+      var that = _this;
+      return new Promise(function (resolve, reject) {
+        that.state.switch ? that.setState({ min: that.state.breakLength }) : that.setState({ min: that.state.sessionLength });
+        resolve("success!!");
+      }).then(function () {
+        that.setState(function (prevState) {
+          return { switch: !prevState.switch };
+        });
+      }).then(function () {
+        that.countDown();
+      }).catch(function (e) {
+        console.error("switchSession error", e);
       });
     };
 
     _this.tick = function () {
-      _this.calculateCurrentCounter();
-      if (_this.state.min === 0 && _this.state.sec === 0) _this.switchSession();
+      var that = _this;
+      return new Promise(function (resolve, reject) {
+        that.calculateCurrentCounter();
+        resolve("done!!");
+      }).then(function (res) {
+        console.log(res);
+        if (that.state.min === 0 && that.state.sec === 0) {
+          clearInterval(that.IntervalId);
+          that.switchSession();
+        }
+      }).catch(function (error) {
+        console.error('tick error', error);
+      });
     };
 
     _this.countDown = function () {
@@ -42,46 +61,63 @@ var Clock = function (_React$Component) {
     };
 
     _this.toggleTimer = function () {
-      console.log(_this.state.pause);
+      console.log("p1: " + _this.state.pause);
       _this.setState(function (prevState) {
         return { pause: !prevState.pause };
+      }, function () {
+        console.log("p2: " + this.state.pause);
+        this.state.pause ? clearInterval(this.IntervalId) : this.countDown();
       });
-      console.log(_this.state.pause + ", " + _this.state.switch);
-      _this.state.pause ? clearInterval(_this.IntervalId) : _this.countDown();
     };
 
     _this.increaseBreak = function () {
-      !_this.state.pause && _this.setState(function (prevState) {
-        return { breakLength: prevState.breakLength + 1 };
-      });
+      if (_this.state.pause) {
+        _this.setState(function (prevState) {
+          return { breakLength: prevState.breakLength + 1 };
+        }, function () {
+          !this.state.switch && this.setState({ min: this.state.breakLength });
+        });
+      }
     };
 
     _this.decreaseBreak = function () {
-      !_this.state.pause && _this.state.breakLength > 0 && _this.setState(function (prevState) {
-        return { breakLength: prevState.breakLength - 1 };
-      });
+      if (_this.state.pause) {
+        _this.state.breakLength > 1 && _this.setState(function (prevState) {
+          return { breakLength: prevState.breakLength - 1 };
+        }, function () {
+          !this.state.switch && this.setState({ min: this.state.breakLength, sec: 0 });
+        });
+      }
     };
 
     _this.increaseSession = function () {
-      !_this.state.pause && _this.setState(function (prevState) {
-        return { sessionLength: prevState.sessionLength + 1 };
-      });
+      console.log("pause: " + _this.state.pause);
+      if (_this.state.pause) {
+        _this.setState(function (prevState) {
+          return { sessionLength: prevState.sessionLength + 1 };
+        }, function () {
+          this.state.switch && this.setState({ min: this.state.sessionLength, sec: 0 });
+        });
+      }
     };
 
     _this.decreaseSession = function () {
-      !_this.state.pause && _this.state.sessionLength > 0 && _this.setState(function (prevState) {
-        return { sessionLength: prevState.sessionLength - 1 };
-      });
+      if (_this.state.pause) {
+        _this.state.sessionLength > 1 && _this.setState(function (prevState) {
+          return { sessionLength: prevState.sessionLength - 1 };
+        }, function () {
+          this.state.switch && this.setState({ min: this.state.sessionLength });
+        });
+      }
     };
 
     _this.state = {
-      switch: true,
-      timerString: "1:00",
-      min: 1,
-      sec: 0,
-      sessionLength: 1,
-      breakLength: 2,
-      pause: true
+      switch: true, //switch between session (true) and break
+      min: 1, //current min
+      sec: 0, //current sec
+      sessionLength: 1, //length of the session duration in mins
+      breakLength: 2, //length of the break duration in mins
+      pause: true //pause toggles when user click on the timer
     };
     return _this;
   }
@@ -101,13 +137,13 @@ var Clock = function (_React$Component) {
         React.createElement(
           "div",
           { className: "col-md-6" },
-          React.createElement(Session, { incSession: this.increaseSession, decBreak: this.decreaseSession, sessionLength: this.state.sessionLength })
+          React.createElement(Session, { incSession: this.increaseSession, decSession: this.decreaseSession, sessionLength: this.state.sessionLength })
         )
       ),
       React.createElement(
         "div",
         null,
-        React.createElement(Timer, { changeTimer: this.toggleTimer, timerStr: this.state.timerString })
+        React.createElement(Timer, { changeTimer: this.toggleTimer, minutes: this.state.min, seconds: this.state.sec })
       )
     );
   };
@@ -130,8 +166,8 @@ var Timer = function (_React$Component2) {
       null,
       React.createElement(
         "div",
-        { className: "TimerView", onClick: this.props.changeTimer },
-        this.props.timerStr
+        { className: "timerView", onClick: this.props.changeTimer },
+        (this.props.minutes < 10 ? "0" + this.props.minutes : this.props.minutes) + ":" + (this.props.seconds < 10 ? "0" + this.props.seconds : this.props.seconds)
       )
     );
   };
@@ -159,7 +195,7 @@ var Break = function (_React$Component3) {
       ),
       React.createElement(
         "div",
-        { onClick: this.props.incBreak },
+        { className: "plus", onClick: this.props.incBreak },
         "+"
       ),
       React.createElement(
