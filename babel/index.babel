@@ -102,10 +102,11 @@ class Clock extends React.Component {
     return(
        <div>
           <div className="row">
-            <div className="col-md-6">
+            <div className="col-md-2" />
+            <div className="col-md-4">
               <Break incBreak={this.increaseBreak} decBreak={this.decreaseBreak} breakLength={this.state.breakLength}/>
             </div>
-            <div className="col-md-6">
+            <div className="col-md-4">
               <Session incSession={this.increaseSession} decSession={this.decreaseSession} sessionLength={this.state.sessionLength}/>
             </div>
           </div>
@@ -135,11 +136,14 @@ class Break extends React.Component{
   
   render(){
     return(
-    <div className="sessionView">
+    <div>
         <div>Break Length</div>
-        <div className="plus" onClick={this.props.incBreak}>+</div>
-        <div>{this.props.breakLength}</div>
-        <div onClick={this.props.decBreak}>-</div>
+        <div className="row">
+          <div className="col-md-3" />
+          <div className="col-md-2 clickable" onClick={this.props.incBreak}>+</div>
+        <div className="col-md-2">{this.props.breakLength}</div>
+        <div className="col-md-2 clickable" onClick={this.props.decBreak}>-</div>
+        </div>
       </div>
     )
   }
@@ -153,10 +157,13 @@ class Session extends React.Component{
   render(){
     return(
     <div>
-        <div>Session Length</div>
-        <div onClick={this.props.incSession}>+</div>
-        <div>{this.props.sessionLength}</div>
-        <div onClick={this.props.decSession}>-</div>
+        <div> Session Length </div>
+        <div className="row text-center">
+          <div className="col-md-3" />
+          <div className="col-md-2 clickable" onClick={this.props.incSession}>+</div>
+          <div className="col-md-2">{this.props.sessionLength}</div>
+          <div className="col-md-2 clickable" onClick={this.props.decSession}>-</div>
+        </div>
       </div>
     )
   }

@@ -129,14 +129,15 @@ var Clock = function (_React$Component) {
       React.createElement(
         "div",
         { className: "row" },
+        React.createElement("div", { className: "col-md-2" }),
         React.createElement(
           "div",
-          { className: "col-md-6" },
+          { className: "col-md-4" },
           React.createElement(Break, { incBreak: this.increaseBreak, decBreak: this.decreaseBreak, breakLength: this.state.breakLength })
         ),
         React.createElement(
           "div",
-          { className: "col-md-6" },
+          { className: "col-md-4" },
           React.createElement(Session, { incSession: this.increaseSession, decSession: this.decreaseSession, sessionLength: this.state.sessionLength })
         )
       ),
@@ -187,7 +188,7 @@ var Break = function (_React$Component3) {
   Break.prototype.render = function render() {
     return React.createElement(
       "div",
-      { className: "sessionView" },
+      null,
       React.createElement(
         "div",
         null,
@@ -195,18 +196,23 @@ var Break = function (_React$Component3) {
       ),
       React.createElement(
         "div",
-        { className: "plus", onClick: this.props.incBreak },
-        "+"
-      ),
-      React.createElement(
-        "div",
-        null,
-        this.props.breakLength
-      ),
-      React.createElement(
-        "div",
-        { onClick: this.props.decBreak },
-        "-"
+        { className: "row" },
+        React.createElement("div", { className: "col-md-3" }),
+        React.createElement(
+          "div",
+          { className: "col-md-2 clickable", onClick: this.props.incBreak },
+          "+"
+        ),
+        React.createElement(
+          "div",
+          { className: "col-md-2" },
+          this.props.breakLength
+        ),
+        React.createElement(
+          "div",
+          { className: "col-md-2 clickable", onClick: this.props.decBreak },
+          "-"
+        )
       )
     );
   };
@@ -230,22 +236,27 @@ var Session = function (_React$Component4) {
       React.createElement(
         "div",
         null,
-        "Session Length"
+        " Session Length "
       ),
       React.createElement(
         "div",
-        { onClick: this.props.incSession },
-        "+"
-      ),
-      React.createElement(
-        "div",
-        null,
-        this.props.sessionLength
-      ),
-      React.createElement(
-        "div",
-        { onClick: this.props.decSession },
-        "-"
+        { className: "row text-center" },
+        React.createElement("div", { className: "col-md-3" }),
+        React.createElement(
+          "div",
+          { className: "col-md-2 clickable", onClick: this.props.incSession },
+          "+"
+        ),
+        React.createElement(
+          "div",
+          { className: "col-md-2" },
+          this.props.sessionLength
+        ),
+        React.createElement(
+          "div",
+          { className: "col-md-2 clickable", onClick: this.props.decSession },
+          "-"
+        )
       )
     );
   };
