@@ -10,6 +10,14 @@ body {
   color: white;
 }
 
+.sessionColor {
+  color: green;
+}
+
+.breakColor {
+  color: red;
+}
+
 .timerView {
   font-size: 140px;
   cursor: pointer;

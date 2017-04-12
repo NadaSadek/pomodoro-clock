@@ -61,11 +61,9 @@ var Clock = function (_React$Component) {
     };
 
     _this.toggleTimer = function () {
-      console.log("p1: " + _this.state.pause);
       _this.setState(function (prevState) {
         return { pause: !prevState.pause };
       }, function () {
-        console.log("p2: " + this.state.pause);
         this.state.pause ? clearInterval(this.IntervalId) : this.countDown();
       });
     };
@@ -91,7 +89,6 @@ var Clock = function (_React$Component) {
     };
 
     _this.increaseSession = function () {
-      console.log("pause: " + _this.state.pause);
       if (_this.state.pause) {
         _this.setState(function (prevState) {
           return { sessionLength: prevState.sessionLength + 1 };
@@ -144,7 +141,8 @@ var Clock = function (_React$Component) {
       React.createElement(
         "div",
         null,
-        React.createElement(Timer, { changeTimer: this.toggleTimer, minutes: this.state.min, seconds: this.state.sec })
+        React.createElement(Timer, { changeTimer: this.toggleTimer, minutes: this.state.min, seconds: this.state.sec, "switch": this.state.switch,
+          pause: this.state.pause })
       )
     );
   };
@@ -162,12 +160,14 @@ var Timer = function (_React$Component2) {
   }
 
   Timer.prototype.render = function render() {
+    var timerClass = 'timerView';
+    timerClass += !this.props.pause ? this.props.switch ? ' sessionColor' : ' breakColor' : '';
     return React.createElement(
       "div",
       null,
       React.createElement(
         "div",
-        { className: "timerView", onClick: this.props.changeTimer },
+        { className: timerClass, onClick: this.props.changeTimer },
         (this.props.minutes < 10 ? "0" + this.props.minutes : this.props.minutes) + ":" + (this.props.seconds < 10 ? "0" + this.props.seconds : this.props.seconds)
       )
     );
